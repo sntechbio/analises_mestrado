@@ -3,6 +3,7 @@ library(stringr)
 library(tidymodels)
 library(recipes)
 library(ggplot2)
+library(RColorBrewer)
 
 path = "/home/leandro/Documentos/SNTechBio/Stephanie"
 setwd(path)
@@ -44,6 +45,8 @@ pca_prep
 
 juice(pca_prep) %>%
   ggplot(aes(PC1, PC2, label = host)) +
-  geom_point(aes(color = host), alpha = 0.7, size = 2) +
+  geom_point(aes(color = host), alpha = 0.7, size = 3) +
 #  geom_text(check_overlap = TRUE, hjust = "inward", family = "IBMPlexSans") +
-  labs(color = NULL)
+  labs(color = NULL) +
+  scale_color_brewer(palette="Paired") +
+  theme_linedraw() 
