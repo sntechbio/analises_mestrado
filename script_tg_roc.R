@@ -12,6 +12,7 @@ data$GLR = as.numeric(data$GLR)
 data$MLR = as.numeric(data$MLR)
 data$NLR = as.numeric(data$NLR)
 data$PLT_x_LYM = as.numeric(data$PLT_x_LYM)
+
 data$hemoglobina = as.numeric(data$hemoglobina)
 data$monocitos_absoluto = as.numeric(data$monocitos_absoluto)
 
@@ -82,3 +83,154 @@ TG.ROC(ref_monocitos,
        # Se.criterion = 0.95,
        model='none', plot=TRUE,
        position.legend = "right") + title("TG-ROC Monocitos %")
+
+
+
+# COVID INTERNADOS X COVID LEVE ----------------------------------------------
+#----------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+covid_internado_e_covid_leve <- data %>% filter(
+  classificacao %in% c("Internado", "Leve")
+)
+
+covid_internado_e_covid_leve_replaced <- covid_internado_e_covid_leve %>%
+  mutate(
+    classificacao = str_replace_all(classificacao, "Internado", "1"),
+    classificacao = str_replace_all(classificacao, "Leve", "0")
+  )
+
+covid_internado_e_covid_leve_replaced$classificacao <-
+  as.numeric(covid_internado_e_covid_leve_replaced$classificacao)
+
+monocitos_relativo_covid_internado_e_leve <-
+  covid_internado_e_covid_leve_replaced$monocitos_absoluto / 
+  sum(covid_internado_e_covid_leve_replaced$monocitos_absoluto)
+test_monocitos_relativo_covid_internado_e_leve <- monocitos_relativo_covid_internado_e_leve
+
+
+
+# GLR ------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+covid_internado_e_covid_leve_reduced <- filter(
+  covid_internado_e_covid_leve_replaced, GLR < 13
+)
+
+ref_internado_e_leve <- covid_internado_e_covid_leve_reduced$classificacao
+test_internado_e_leve <- covid_internado_e_covid_leve_reduced$GLR
+
+TG.ROC(ref_internado_e_leve,
+       test_internado_e_leve,
+      # Se.criterion = 0.95,
+      # Sp.criterion = 0.95,
+       model='binormal', plot=T,
+       position.legend = "right") + title("TG-ROC GLR", sub = "Leve x COVID19 Internados")
+
+
+
+# PLR ------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+covid_internado_e_covid_leve_reduced_plr <- filter(
+  covid_internado_e_covid_leve_replaced, PLT_x_LYM < 80
+)
+
+ref_internado_e_leve_plr <- covid_internado_e_covid_leve_reduced_plr$classificacao
+test_internado_e_leve_plr <- covid_internado_e_covid_leve_reduced_plr$PLT_x_LYM
+
+TG.ROC(ref_internado_e_leve_plr,
+       test_internado_e_leve_plr,
+       # Se.criterion = 0.95,
+       # Sp.criterion = 0.95,
+       model='binormal', plot=T,
+       position.legend = "right") + title("TG-ROC PLR", sub = "Leve x COVID19 Internados")
+
+
+
+# HGB ------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+ref_internado_e_leve_hgb <- covid_internado_e_covid_leve_replaced$classificacao
+test_internado_e_leve_hgb <- covid_internado_e_covid_leve_replaced$hemoglobina
+
+TG.ROC(ref_internado_e_leve_hgb,
+       test_internado_e_leve_hgb,
+       # Se.criterion = 0.95,
+       # Sp.criterion = 0.95,
+       model='binormal', plot=T,
+       position.legend = "right") + title("TG-ROC HGB", sub = "Leve x COVID19 Internados")
+
+
+
+# Monocitos ------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+
+ref_internado_e_leve_monocitos <- covid_internado_e_covid_leve_replaced$classificacao
+
+TG.ROC(ref_internado_e_leve_monocitos,
+       monocitos_relativo_covid_internado_e_leve,
+       # Se.criterion = 0.95,
+       # Sp.criterion = 0.95,
+       model='binormal', plot=T,
+       position.legend = "right") + title("TG-ROC Monócitos %", sub = "Leve x COVID19 Internados")
+
+
+
+# COVID INTERNADOS X controle negativa
+covid_internado_e_controle_negativo <- data %>% filter(
+  classificacao %in% c("Internado", "NEGATIVO")
+)
+
+covid_internado_e_controle_negativo_replaced <- covid_internado_e_controle_negativo %>%
+  mutate(
+    classificacao = str_replace_all(classificacao, "Internado", "1"),
+    classificacao = str_replace_all(classificacao, "NEGATIVO", "0")
+  )
+
+covid_internado_e_controle_negativo_replaced$classificacao <-
+  as.numeric(covid_internado_e_controle_negativo_replaced$classificacao)
+
+monocitos_covid_internado_e_controle_negativo <-
+  covid_internado_e_controle_negativo_replaced$monocitos_absoluto / 
+  sum(covid_internado_e_controle_negativo_replaced$monocitos_absoluto)
+test_covid_internado_e_controle_negativo <- monocitos_covid_internado_e_controle_negativo
+
+# LEVE E CONTROLE NEGATIVO
+covid_leve_e_controle_negativo <- data %>% filter(
+  classificacao %in% c("Leve", "NEGATIVO")
+)
+
+covid_leve_e_controle_negativo_replaced <- covid_leve_e_controle_negativo %>%
+  mutate(
+    classificacao = str_replace_all(classificacao, "Leve", "1"),
+    classificacao = str_replace_all(classificacao, "NEGATIVO", "0")
+  )
+
+covid_leve_e_controle_negativo_replaced$classificacao <-
+  as.numeric(covid_leve_e_controle_negativo_replaced$classificacao)
+
+monocitos_covid_leve_e_controle_negativo_replaced <-
+  covid_leve_e_controle_negativo_replaced$monocitos_absoluto / 
+  sum(covid_leve_e_controle_negativo_replaced$monocitos_absoluto)
+test_covid_leve_e_controle_negativo_replaced <- monocitos_covid_leve_e_controle_negativo_replaced
+
+# negativo e internado evoluiu
+
+data_II <- read.csv("dados_para_analise_II.csv")
+
+covid_negativo_e_internado_evoluiu <- data_II %>% filter(
+  classificacao %in% c("NEGATIVO", "Internado (Evoluiu)")
+)
+
+covid_negativo_e_internado_evoluiu_replaced <- covid_negativo_e_internado_evoluiu %>%
+  mutate(
+    classificacao = str_replace_all(classificacao, "Internado (Evoluiu)", "1"),
+    classificacao = str_replace_all(classificacao, "NEGATIVO", "0")
+  )
+
+covid_negativo_e_internado_evoluiu_replaced$classificacao <-
+  as.numeric(covid_negativo_e_internado_evoluiu_replaced$classificacao)
+
+monocitos_covid_negativo_e_internado_evoluiu <-
+  covid_negativo_e_internado_evoluiu_replaced$monocitos_absoluto / 
+  sum(covid_negativo_e_internado_evoluiu_replaced$monocitos_absoluto)
+test_covid_negativo_e_internado_evoluiu_replaced <- covid_negativo_e_internado_evoluiu_replaced
+
+
