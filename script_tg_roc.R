@@ -173,7 +173,9 @@ TG.ROC(ref_internado_e_leve_monocitos,
 
 
 
-# COVID INTERNADOS X controle negativa
+# COVID INTERNADOS X CONTROLE NEGATIVO ---------------------------------------
+# ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 covid_internado_e_controle_negativo <- data %>% filter(
   classificacao %in% c("Internado", "NEGATIVO")
 )
@@ -192,7 +194,74 @@ monocitos_covid_internado_e_controle_negativo <-
   sum(covid_internado_e_controle_negativo_replaced$monocitos_absoluto)
 test_covid_internado_e_controle_negativo <- monocitos_covid_internado_e_controle_negativo
 
-# LEVE E CONTROLE NEGATIVO
+
+# GLR ------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+#covid_internado_e_controle_negativo_reduced <- filter(
+#  covid_internado_e_controle_negativo, GLR < 13
+#)
+
+ref_internado_e_controle_negativo <- covid_internado_e_controle_negativo_replaced$classificacao
+test_internado_e_controle_negativo <- covid_internado_e_controle_negativo_replaced$GLR
+
+TG.ROC(ref_internado_e_controle_negativo,
+       test_internado_e_controle_negativo,
+       # Se.criterion = 0.95,
+       # Sp.criterion = 0.95,
+       model='binormal', plot=T,
+       position.legend = "right") + title("TG-ROC GLR", sub = "Controle Negativo x COVID19 Internados")
+
+
+
+# PLR ------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+covid_internado_e_controle_negativo_reduced_plr <- filter(
+  covid_internado_e_controle_negativo_replaced, PLT_x_LYM < 100
+)
+
+ref_internado_e_controle_negativo_plr <- covid_internado_e_controle_negativo_reduced_plr$classificacao
+test_internado_e_controle_negativo_plr <- covid_internado_e_controle_negativo_reduced_plr$PLT_x_LYM
+
+TG.ROC(ref_internado_e_controle_negativo_plr,
+       test_internado_e_controle_negativo_plr,
+       # Se.criterion = 0.95,
+       # Sp.criterion = 0.95,
+       model='binormal', plot=T,
+       position.legend = "right") + title("TG-ROC PLR", sub = "Controle Negativo x COVID19 Internados")
+
+
+
+# HGB ------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+ref_internado_e_controle_negativo_hgb <- covid_internado_e_controle_negativo_reduced_plr$classificacao
+test_internado_e_controle_negativo_hgb <- covid_internado_e_controle_negativo_reduced_plr$hemoglobina
+
+TG.ROC(ref_internado_e_controle_negativo_hgb,
+       test_internado_e_controle_negativo_hgb,
+       # Se.criterion = 0.95,
+       # Sp.criterion = 0.95,
+       model='binormal', plot=T,
+       position.legend = "right") + title("TG-ROC HGB", sub = "Controle Negativo x COVID19 Internados")
+
+
+
+# Monocitos ------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+
+ref_internado_e_controle_negativo_monocitos <- covid_internado_e_controle_negativo_replaced$classificacao
+
+TG.ROC(ref_internado_e_controle_negativo_monocitos,
+       monocitos_covid_internado_e_controle_negativo,
+       # Se.criterion = 0.95,
+       # Sp.criterion = 0.95,
+       model='binormal', plot=T,
+       position.legend = "right") + title("TG-ROC Monócitos %", sub = "Controle Negativo x COVID19 Internados")
+
+
+
+# LEVE E CONTROLE NEGATIVO ---------------------------------------------------
+# ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 covid_leve_e_controle_negativo <- data %>% filter(
   classificacao %in% c("Leve", "NEGATIVO")
 )
@@ -211,17 +280,65 @@ monocitos_covid_leve_e_controle_negativo_replaced <-
   sum(covid_leve_e_controle_negativo_replaced$monocitos_absoluto)
 test_covid_leve_e_controle_negativo_replaced <- monocitos_covid_leve_e_controle_negativo_replaced
 
-# negativo e internado evoluiu
+# PLR ------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+covid_leve_e_controle_negativo_reduced_plr <- filter(
+  covid_leve_e_controle_negativo_replaced, PLT_x_LYM < 110
+)
+
+ref_leve_e_controle_negativo_plr <- covid_leve_e_controle_negativo_reduced_plr$classificacao
+test_leve_e_controle_negativo_plr <- covid_leve_e_controle_negativo_reduced_plr$PLT_x_LYM
+
+TG.ROC(ref_leve_e_controle_negativo_plr,
+       test_leve_e_controle_negativo_plr,
+       # Se.criterion = 0.95,
+       # Sp.criterion = 0.95,
+       model='binormal', plot=T,
+       position.legend = "right") + title("TG-ROC PLR", sub = "Controle Negativo x Leve")
+
+
+
+# HGB ------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+ref_leve_e_controle_negativo_hgb <- covid_leve_e_controle_negativo_replaced$classificacao
+test_leve_e_controle_negativo_hgb <- covid_leve_e_controle_negativo_replaced$hemoglobina
+
+TG.ROC(ref_leve_e_controle_negativo_hgb,
+       test_leve_e_controle_negativo_hgb,
+       # Se.criterion = 0.95,
+       # Sp.criterion = 0.95,
+       model='binormal', plot=T,
+       position.legend = "right") + title("TG-ROC HGB", sub = "Controle Negativo x Leve")
+
+
+
+# Monocitos ------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+
+ref_leve_e_controle_negativo_monocitos <- covid_leve_e_controle_negativo_replaced$classificacao
+
+TG.ROC(ref_leve_e_controle_negativo_monocitos,
+       monocitos_covid_leve_e_controle_negativo_replaced,
+       # Se.criterion = 0.95,
+       # Sp.criterion = 0.95,
+       model='binormal', plot=T,
+       position.legend = "right") + title("TG-ROC Monócitos %", sub = "Controle Negativo x Leve")
+
+
+
+# negativo e internado evoluiu -----------------------------------------------
+# ----------------------------------------------------------------------------
+# ----------------------------------------------------------------------------
 
 data_II <- read.csv("dados_para_analise_II.csv")
 
 covid_negativo_e_internado_evoluiu <- data_II %>% filter(
-  classificacao %in% c("NEGATIVO", "Internado (Evoluiu)")
+  classificacao %in% c("NEGATIVO", "IE")
 )
 
 covid_negativo_e_internado_evoluiu_replaced <- covid_negativo_e_internado_evoluiu %>%
   mutate(
-    classificacao = str_replace_all(classificacao, "Internado (Evoluiu)", "1"),
+    classificacao = str_replace_all(classificacao, "IE", "1"),
     classificacao = str_replace_all(classificacao, "NEGATIVO", "0")
   )
 
@@ -232,5 +349,49 @@ monocitos_covid_negativo_e_internado_evoluiu <-
   covid_negativo_e_internado_evoluiu_replaced$monocitos_absoluto / 
   sum(covid_negativo_e_internado_evoluiu_replaced$monocitos_absoluto)
 test_covid_negativo_e_internado_evoluiu_replaced <- covid_negativo_e_internado_evoluiu_replaced
+
+# PLR ------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+#covid_covid_negativo_e_internado_evoluiu_plr <- filter(
+#  covid_covid_negativo_e_internado_evoluiu, PLT_x_LYM < 110
+#)
+
+ref_covid_negativo_e_internado_evoluiu_plr <- covid_negativo_e_internado_evoluiu_replaced$classificacao
+test_covid_negativo_e_internado_evoluiu_plr <- as.numeric(covid_negativo_e_internado_evoluiu_replaced$PLT_x_LYM)
+
+TG.ROC(ref_covid_negativo_e_internado_evoluiu_plr,
+       test_covid_negativo_e_internado_evoluiu_plr,
+       # Se.criterion = 0.95,
+       # Sp.criterion = 0.95,
+       model='binormal', plot=T,
+       position.legend = "right") + title("TG-ROC PLR", sub = "Controle Negativo x Internado (Evoluiu)")
+
+
+
+# HGB ------------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+ref_covid_negativo_e_internado_evoluiu_hgb <- covid_negativo_e_internado_evoluiu_replaced$classificacao
+test_covid_negativo_e_internado_evoluiu_hgb <- covid_negativo_e_internado_evoluiu_replaced$hemoglobina
+
+TG.ROC(ref_covid_negativo_e_internado_evoluiu_hgb,
+       test_covid_negativo_e_internado_evoluiu_hgb,
+       # Se.criterion = 0.95,
+       # Sp.criterion = 0.95,
+       model='binormal', plot=T,
+       position.legend = "right") + title("TG-ROC HGB", sub = "Controle Negativo x Internado (Evoluiu)")
+
+
+
+# Monocitos ------------------------------------------------------------------
+#-----------------------------------------------------------------------------
+
+ref_covid_negativo_e_internado_evoluiu_monocitos <- covid_negativo_e_internado_evoluiu_replaced$classificacao
+
+TG.ROC(ref_covid_negativo_e_internado_evoluiu_monocitos,
+       monocitos_covid_negativo_e_internado_evoluiu,
+       # Se.criterion = 0.95,
+       # Sp.criterion = 0.95,
+       model='binormal', plot=T,
+       position.legend = "right") + title("TG-ROC Monócitos %", sub = "Controle Negativo x Internado (Evoluiu)")
 
 
